@@ -16,12 +16,21 @@ class App {
     this.textField.setAttribute('autofocus', 'true');
     this.container.append(this.keyboard.init());
     this.changeLanguage();
+    this.unblur();
     return this.app;
   }
 
   changeLanguage() {
     this.keyboard.keys.forEach((key) => {
       key.setText(this.lang);
+    });
+  }
+
+  unblur() {
+    this.textField.addEventListener('blur', () => {
+      setTimeout(() => {
+        this.textField.focus();
+      }, 0);
     });
   }
 }
