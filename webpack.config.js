@@ -56,11 +56,12 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     assetModuleFilename: 'assets/[hash][ext]',
-    clean: true,
+    clean: {
+      keep: /\.git/,
+    },
   },
   module: {
     rules: [
-      // JavaScript
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -71,19 +72,15 @@ module.exports = {
           },
         },
       },
-      // Html
       { test: /\.(html)$/, use: ['html-loader'] },
-      // Styles
       {
         test: /\.(s[ac]|c)ss$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
       },
-      // Image
       {
         test: /\.(png|jpe?g|gif|svg|webp|ico)$/i,
         type: mode === 'production' ? 'asset' : 'asset/resource',
       },
-      // Fonts
       {
         test: /\.(woff2?|eot|ttf|otf)$/i,
         type: 'asset/resource',
