@@ -17,6 +17,7 @@ class App {
     this.container.append(this.keyboard.init());
     this.changeLanguage();
     this.unblur();
+    this.textFieldListners();
     return this.app;
   }
 
@@ -32,6 +33,186 @@ class App {
         this.textField.focus();
       }, 0);
     });
+  }
+
+  textFieldListners() {
+    this.textField.addEventListener('keydown', (e) => {
+      const key = this.keyboard.keys.find((item) => item.code === e.code);
+
+      if (!key && e.code !== 'F12') {
+        e.preventDefault();
+        return;
+      }
+
+      if (e.code === 'F12') return;
+
+      if (key.code === 'CapsLock' && !e.repeat) {
+        e.preventDefault();
+        this.caps = !this.caps;
+
+        if (this.caps) {
+          key.addClasses('active');
+        } else {
+          key.removeClasses('active');
+        }
+        this.changeCapsShift(e.shiftKey);
+      } else {
+        key.addClasses('active');
+
+        if (((e.ctrlKey || e.metaKey) && e.altKey && !e.repeat) || e.code === 'MetaLeft') {
+          e.preventDefault();
+          this.lang = this.lang === 'ru' ? 'en' : 'ru';
+          localStorage.setItem('lang', this.lang);
+          this.changeLanguage();
+          return;
+        }
+
+        if (/Shift.*/g.test(e.code) && !e.repeat) {
+          e.preventDefault();
+          this.shift = !this.shift;
+          if (!e.isTrusted) {
+            if (this.shift) {
+              key.addClasses('active');
+            } else {
+              this.keyboard.keys.forEach((item) => {
+                if (/Shift.*/g.test(item.code)) {
+                  item.removeClasses('active');
+                }
+              });
+            }
+            this.changeCapsShift(this.shift);
+          } else {
+            this.changeCapsShift(true);
+          }
+          return;
+        }
+
+        if (e.code === 'Backspace') {
+          e.preventDefault();
+          this.backspace();
+          return;
+        }
+
+        if (e.code === 'Delete') {
+          e.preventDefault();
+          this.delete();
+          return;
+        }
+
+        if (e.code === 'Tab') {
+          e.preventDefault();
+          this.inputText('\t');
+          return;
+        }
+
+        if (e.code === 'Enter') {
+          e.preventDefault();
+          this.inputText('\n');
+          return;
+        }
+
+        if (
+          e.code === 'ArrowLeft' ||
+          e.code === 'ArrowUp' ||
+          e.code === 'ArrowRight' ||
+          e.code === 'ArrowDown'
+        ) {
+          e.preventDefault();
+          this.inputText(key.printText);
+        }
+
+        if (!key.func && !e.ctrlKey) {
+          e.preventDefault();
+          this.inputText(key.printText);
+        }
+      }
+    });
+
+    this.textField.addEventListener('keyup', (e) => {
+      const key = this.keyboard.keys.find((item) => item.code === e.code);
+
+      if (!key && e.code !== 'F12') {
+        e.preventDefault();
+        return;
+      }
+
+      if (e.code === 'F12') return;
+
+      if (/Shift.*/g.test(e.code)) {
+        e.preventDefault();
+        if (e.isTrusted) {
+          this.shift = !this.shift;
+          this.keyboard.keys.forEach((item) => {
+            if (/Shift.*/g.test(item.code)) {
+              item.removeClasses('active');
+            }
+          });
+          this.changeCapsShift(false);
+        }
+        return;
+      }
+
+      if (e.code !== 'CapsLock') {
+        key.removeClasses('active');
+      }
+    });
+  }
+
+  changeCapsShift(shift = false) {
+    const toUp = (this.caps && !shift) || (!this.caps && shift);
+    this.keyboard.keys.forEach((key) => {
+      if (key.func) return;
+
+      if (toUp && !shift && /Digit\d/g.test(key.code)) return;
+
+      if (toUp) {
+        key.shiftText(this.lang);
+      } else {
+        key.setText(this.lang);
+      }
+    });
+  }
+
+  inputText(chars) {
+    const cursorPos = this.textField.selectionStart;
+
+    const startText = this.textField.value.slice(0, cursorPos);
+    const endText = this.textField.value.slice(this.textField.selectionEnd);
+
+    this.textField.value = `${startText}${chars}${endText}`;
+
+    this.textField.selectionStart = cursorPos + chars.length;
+    this.textField.selectionEnd = this.textField.selectionStart;
+  }
+
+  backspace() {
+    if (this.textField.selectionStart !== this.textField.selectionEnd) {
+      this.inputText('');
+    } else {
+      const cursorPos = Math.max(0, this.textField.selectionStart - 1);
+      const startText = this.textField.value.slice(0, cursorPos);
+      const endText = this.textField.value.slice(this.textField.selectionEnd);
+
+      this.textField.value = startText + endText;
+
+      this.textField.selectionStart = cursorPos;
+      this.textField.selectionEnd = this.textField.selectionStart;
+    }
+  }
+
+  delete() {
+    if (this.textField.selectionStart !== this.textField.selectionEnd) {
+      this.inputText('');
+    } else {
+      const cursorPos = this.textField.selectionStart;
+      const startText = this.textField.value.slice(0, cursorPos);
+      const endText = this.textField.value.slice(this.textField.selectionEnd + 1);
+
+      this.textField.value = startText + endText;
+
+      this.textField.selectionStart = cursorPos;
+      this.textField.selectionEnd = this.textField.selectionStart;
+    }
   }
 }
 
