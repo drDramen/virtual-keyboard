@@ -45,6 +45,7 @@ class App {
       }
 
       if (e.code === 'F12') return;
+      if (/Alt.*/g.test(e.code)) e.preventDefault();
 
       if (key.code === 'CapsLock' && !e.repeat) {
         e.preventDefault();
