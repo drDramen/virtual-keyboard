@@ -15,7 +15,14 @@ class App {
   init() {
     this.textField.setAttribute('autofocus', 'true');
     this.container.append(this.keyboard.init());
+    this.changeLanguage();
     return this.app;
+  }
+
+  changeLanguage() {
+    this.keyboard.keys.forEach((key) => {
+      key.setText(this.lang);
+    });
   }
 }
 
