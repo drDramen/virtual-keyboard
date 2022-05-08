@@ -13,6 +13,9 @@ class Key {
   init() {
     this.addClasses(...this.classes, 'btn-reset');
     this.setText();
+    this.mouseEvent('mousedown', 'keydown');
+    this.mouseEvent('mouseup', 'keyup');
+    this.mouseEvent('mouseout', 'keyup');
 
     return this.key;
   }
@@ -37,6 +40,27 @@ class Key {
   shiftText(crntLanguage) {
     this.printText = this.text[crntLanguage].shift;
     this.key.textContent = this.printText;
+  }
+
+  mouseEvent(from, to) {
+    this.textField.focus();
+
+    this.key.addEventListener(from, () => {
+      this.textField.focus();
+      if (from === 'mousedown') this.isMouseDown = true;
+
+      if (from === 'mouseout' && !this.isMouseDown) return;
+
+      const event = new KeyboardEvent(to, {
+        bubbles: true,
+        cancelable: true,
+        code: this.code,
+        view: window,
+      });
+
+      this.textField.dispatchEvent(event);
+      if (from === 'mouseup' || from === 'mouseout') this.isMouseDown = false;
+    });
   }
 }
 
