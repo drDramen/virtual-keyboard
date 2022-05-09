@@ -159,7 +159,14 @@ class App {
 
     this.keyboard.keys.forEach((key) => {
       if (key.func) return;
-      if ((this.caps || !shift) && !/Key.*/g.test(key.code)) {
+      if (
+        (this.caps || !shift) &&
+        ((this.lang === 'ru' &&
+          !/Key.*|Semicolon|Quote|Comma|Period|BracketRight|BracketLeft|Backquote/g.test(
+            key.code
+          )) ||
+          (this.lang === 'en' && !/Key.*/g.test(key.code)))
+      ) {
         key.setText(this.lang, shift);
         return;
       }
