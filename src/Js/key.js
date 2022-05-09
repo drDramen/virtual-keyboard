@@ -28,17 +28,12 @@ class Key {
     this.key.classList.remove(...rest);
   }
 
-  setText(crntLanguage = 'en') {
+  setText(crntLanguage = 'en', up = false) {
     if (this.func) {
       this.printText = this.text;
     } else {
-      this.printText = this.text[crntLanguage].text;
+      this.printText = up ? this.text[crntLanguage].shift : this.text[crntLanguage].text;
     }
-    this.key.textContent = this.printText;
-  }
-
-  shiftText(crntLanguage) {
-    this.printText = this.text[crntLanguage].shift;
     this.key.textContent = this.printText;
   }
 

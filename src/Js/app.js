@@ -15,16 +15,10 @@ class App {
   init() {
     this.textField.setAttribute('autofocus', 'true');
     this.container.append(this.keyboard.init());
-    this.changeLanguage();
+    this.changeCapsShift();
     this.unblur();
     this.textFieldListners();
     return this.app;
-  }
-
-  changeLanguage() {
-    this.keyboard.keys.forEach((key) => {
-      key.setText(this.lang);
-    });
   }
 
   unblur() {
@@ -56,7 +50,7 @@ class App {
         } else {
           key.removeClasses('active');
         }
-        this.changeCapsShift(e.shiftKey);
+        this.changeCapsShift(e.shiftKey || this.shift);
       } else {
         key.addClasses('active');
 
@@ -64,13 +58,14 @@ class App {
           e.preventDefault();
           this.lang = this.lang === 'ru' ? 'en' : 'ru';
           localStorage.setItem('lang', this.lang);
-          this.changeLanguage();
+          this.changeCapsShift(e.shiftKey || this.shift);
           return;
         }
 
         if (/Shift.*/g.test(e.code) && !e.repeat) {
           e.preventDefault();
           this.shift = !this.shift;
+
           if (!e.isTrusted) {
             if (this.shift) {
               key.addClasses('active');
@@ -141,6 +136,7 @@ class App {
 
       if (/Shift.*/g.test(e.code)) {
         e.preventDefault();
+
         if (e.isTrusted) {
           this.shift = !this.shift;
           this.keyboard.keys.forEach((item) => {
@@ -161,27 +157,21 @@ class App {
 
   changeCapsShift(shift = false) {
     const toUp = (this.caps && !shift) || (!this.caps && shift);
+
     this.keyboard.keys.forEach((key) => {
       if (key.func) return;
-
       if (toUp && !shift && /Digit\d/g.test(key.code)) return;
 
-      if (toUp) {
-        key.shiftText(this.lang);
-      } else {
-        key.setText(this.lang);
-      }
+      key.setText(this.lang, toUp);
     });
   }
 
   inputText(chars) {
     const cursorPos = this.textField.selectionStart;
-
     const startText = this.textField.value.slice(0, cursorPos);
     const endText = this.textField.value.slice(this.textField.selectionEnd);
 
     this.textField.value = `${startText}${chars}${endText}`;
-
     this.textField.selectionStart = cursorPos + chars.length;
     this.textField.selectionEnd = this.textField.selectionStart;
   }
@@ -195,7 +185,6 @@ class App {
       const endText = this.textField.value.slice(this.textField.selectionEnd);
 
       this.textField.value = startText + endText;
-
       this.textField.selectionStart = cursorPos;
       this.textField.selectionEnd = this.textField.selectionStart;
     }
@@ -210,7 +199,6 @@ class App {
       const endText = this.textField.value.slice(this.textField.selectionEnd + 1);
 
       this.textField.value = startText + endText;
-
       this.textField.selectionStart = cursorPos;
       this.textField.selectionEnd = this.textField.selectionStart;
     }
