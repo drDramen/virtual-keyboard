@@ -159,7 +159,7 @@ class App {
 
     this.keyboard.keys.forEach((key) => {
       if (key.func) return;
-      if ((this.caps || !shift) && /Digit\d*/g.test(key.code)) {
+      if ((this.caps || !shift) && !/Key.*/g.test(key.code)) {
         key.setText(this.lang, shift);
         return;
       }
