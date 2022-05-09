@@ -64,9 +64,8 @@ class App {
 
         if (/Shift.*/g.test(e.code) && !e.repeat) {
           e.preventDefault();
-          this.shift = !this.shift;
-
           if (!e.isTrusted) {
+            this.shift = !this.shift;
             if (this.shift) {
               key.addClasses('active');
             } else {
@@ -138,7 +137,7 @@ class App {
         e.preventDefault();
 
         if (e.isTrusted) {
-          this.shift = !this.shift;
+          this.shift = false;
           this.keyboard.keys.forEach((item) => {
             if (/Shift.*/g.test(item.code)) {
               item.removeClasses('active');
@@ -160,7 +159,10 @@ class App {
 
     this.keyboard.keys.forEach((key) => {
       if (key.func) return;
-      if (toUp && !shift && /Digit\d/g.test(key.code)) return;
+      if ((this.caps || !shift) && /Digit\d*/g.test(key.code)) {
+        key.setText(this.lang, shift);
+        return;
+      }
 
       key.setText(this.lang, toUp);
     });
