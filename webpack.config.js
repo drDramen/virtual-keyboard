@@ -34,6 +34,7 @@ const plugins = [
   new HtmlWebpackPlugin({
     template: './src/index.html',
     title: 'Demo',
+    favicon: './public/favicon.ico',
   }),
   new CopyPlugin({
     patterns: [
