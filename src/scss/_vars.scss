@@ -1,0 +1,7 @@
+:root {
+  --fz-body: 16px;
+  --color-body: #292929;
+  --content-width: 1200px;
+  --container-offset: 40px;
+  --container-width: calc(var(--content-width) + (var(--container-offset) * 2));
+}
