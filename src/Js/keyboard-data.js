@@ -567,7 +567,7 @@ const keyboardData = [
       func: false,
       lang: {
         en: {
-          text: `'`,
+          text: '\'',
           shift: '"',
         },
         ru: {

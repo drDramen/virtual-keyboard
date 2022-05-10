@@ -107,10 +107,10 @@ class App {
         }
 
         if (
-          e.code === 'ArrowLeft' ||
-          e.code === 'ArrowUp' ||
-          e.code === 'ArrowRight' ||
-          e.code === 'ArrowDown'
+          e.code === 'ArrowLeft'
+          || e.code === 'ArrowUp'
+          || e.code === 'ArrowRight'
+          || e.code === 'ArrowDown'
         ) {
           e.preventDefault();
           this.inputText(key.printText);
@@ -160,12 +160,10 @@ class App {
     this.keyboard.keys.forEach((key) => {
       if (key.func) return;
       if (
-        (this.caps || !shift) &&
-        ((this.lang === 'ru' &&
-          !/Key.*|Semicolon|Quote|Comma|Period|BracketRight|BracketLeft|Backquote/g.test(
-            key.code
-          )) ||
-          (this.lang === 'en' && !/Key.*/g.test(key.code)))
+        (this.caps || !shift)
+        && ((this.lang === 'ru'
+        && !/Key.*|Semicolon|Quote|Comma|Period|BracketRight|BracketLeft|Backquote/g.test(key.code))
+          || (this.lang === 'en' && !/Key.*/g.test(key.code)))
       ) {
         key.setText(this.lang, shift);
         return;
